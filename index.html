@@ -221,9 +221,23 @@
 		}
 	}
 
+	// 获取URL参数
+	function getUrlParam(name) {
+		const urlParams = window.location.search.split('pdf/')[1];
+		return urlParams;
+	}
+
 	// 页面加载完成后初始化验证码
 	document.addEventListener('DOMContentLoaded', function () {
 		generateCaptcha();
+
+		// 从URL参数获取验证号码并赋值
+		const verificationParam = getUrlParam('verification');
+		console.log(verificationParam);
+		
+		if (verificationParam) {
+			document.getElementById('verificationValue').value = verificationParam;
+		}
 
 		// 为输入框绑定焦点事件
 		const inputs = document.querySelectorAll('.input_value');
