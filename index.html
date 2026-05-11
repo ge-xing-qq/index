@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<title>内蒙古社会保险电子表单在线验证平台</title>
 </head>
 <link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./vendor.css">
@@ -193,26 +193,16 @@
 		submitCode();
 	}
 
-	// 验证号码数据（内嵌数据，避免CORS问题）
-	const verificationData = {
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234": { "pdfPath": "./pdf/index.pdf" },
-		"1234567890ABCDEFGHIJKLMNOPQRST": { "pdfPath": "./pdf/index.pdf" },
-		"QWERTYUIOPASDFGHJKLZXCVBNM1234": { "pdfPath": "./pdf/index.pdf" },
-		"00000000000000000000000000000000": { "pdfPath": "./pdf/index.pdf" }
-	}
-
 	// 提交查询函数
 	function submitCode() {
 		const verificationValue = document.getElementById('verificationValue').value.trim();
 		console.log('正在查询验证号码：', verificationValue);
 
 		// 在数据中查找匹配的验证号码
-		const matchedItem = verificationData[verificationValue];
 
-		if (matchedItem) {
+		if (verificationValue) {
 			// 验证号码存在，跳转到PDF预览页面
-			const pdfPath = encodeURIComponent(matchedItem.pdfPath);
-			window.location.href = `viewPdf.html?pdf=${pdfPath}`;
+			window.location.href = `viewPdf.html?pdf=${verificationValue}`;
 		} else {
 			// 验证号码不存在
 			alert('未找到匹配的验证号码，请检查输入是否正确');

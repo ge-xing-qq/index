@@ -9,10 +9,20 @@
     <iframe id="iframe" src="" frameborder="0" width="100%" height="100%"></iframe>
     <script>
         // 获取index传过来的参数
-        const urlParams = window.location.search.split('%2F')[2];
-        console.log(urlParams);
+        // 验证号码数据（内嵌数据，避免CORS问题）
+        const verificationData = {
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234": "index.pdf" ,
+            "1234567890ABCDEFGHIJKLMNOPQRST": "index.pdf" ,
+            "QWERTYUIOPASDFGHJKLZXCVBNM1234": "index.pdf" ,
+            "00000000000000000000000000000000": "index.pdf" 
+        }
+
+        const urlParams = window.location.search.split('=')[1];
+        console.log(verificationData[urlParams]);
+        
+        console.log('./pdf/' + verificationData[urlParams]);
         // 设置iframe的src属性
-        document.getElementById('iframe').src = './pdf/' + urlParams;
+        document.getElementById('iframe').src = './pdf/' + verificationData[urlParams];
 
     </script>
 </body>
