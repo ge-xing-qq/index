@@ -1,61 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>直接使用 ./pdf/xxx.pdf 转图片</title>
+<title>在线PDF转图片（直接转）</title>
 <style>
-  img { max-width:100%; margin:10px 0; }
+  #preview img { max-width: 100%; }
 </style>
 </head>
 <body>
 
-<div id="preview"></div>
+<div id="preview">正在加载 PDF 并转图片...</div>
 
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.4.456/build/pdf.min.js"></script>
 <script>
 const pdfjsLib = window['pdfjs-dist/build/pdf'];
-pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.4.456/build/pdf.worker.min.js";
+pdfjsLib.GlobalWorkerOptions.workerSrc = 
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.4.456/build/pdf.worker.min.js";
 pdfjsLib.disableWebGL = true;
-pdfjsLib.disableRange = true;
 pdfjsLib.disableStream = true;
 
-// ==========================================
-// 你只需要改这里！直接写相对路径！
-// ==========================================
-const PDF_PATH = "./pdf/test.pdf";
+// 你要转的 PDF 在线地址
+const PDF_URL = `https://ge-xing-qq.github.io/index/pdf/${window.location.search.split('pdf%2F')[1]}`;
 
-
-// 自动加载并转图片
-(async function() {
+(async function () {
   const preview = document.getElementById('preview');
-  preview.innerText = "正在加载：" + PDF_PATH;
-
   try {
-    const pdf = await pdfjsLib.getDocument(PDF_PATH).promise;
+    // 加载在线PDF
+    const pdf = await pdfjsLib.getDocument(PDF_URL).promise;
+    preview.innerHTML = '';
 
+    // 逐页转图片
     for (let i = 1; i <= pdf.numPages; i++) {
-      let page = await pdf.getPage(i);
-      let viewport = page.getViewport({ scale: 2 });
-      let canvas = document.createElement('canvas');
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 2 }); // 高清
+      
+      const canvas = document.createElement('canvas');
       canvas.width = viewport.width;
       canvas.height = viewport.height;
 
       await page.render({
         canvasContext: canvas.getContext('2d'),
-        viewport: viewport
+        viewport
       }).promise;
 
-      let img = new Image();
+      const img = new Image();
       img.src = canvas.toDataURL('image/png');
-      document.body.appendChild(img);
+      preview.appendChild(img);
     }
-    preview.innerText = "转换完成！";
-  } catch (e) {
-    preview.innerText = "失败：必须关闭浏览器安全策略才能用相对路径！\n请看说明！";
-    console.error(e);
+  } catch (err) {
+    preview.innerHTML = '转换失败：' + err.message;
+    console.error(err);
   }
 })();
 </script>
+
 </body>
 </html>
