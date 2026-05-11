@@ -193,16 +193,28 @@
 		submitCode();
 	}
 
+	// 验证号码数据（内嵌数据，避免CORS问题）
+	const verificationData = [
+		{"verificationCode": "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234", "pdfPath": "./pdf/sample1.pdf"},
+		{"verificationCode": "1234567890ABCDEFGHIJKLMNOPQRST", "pdfPath": "./pdf/sample2.pdf"},
+		{"verificationCode": "QWERTYUIOPASDFGHJKLZXCVBNM1234", "pdfPath": "./pdf/sample3.pdf"},
+		{"verificationCode": "00000000000000000000000000000000", "pdfPath": "./pdf/00000000000000000000000000000000.pdf"}
+	];
+
 	// 提交查询函数
 	function submitCode() {
 		const verificationValue = document.getElementById('verificationValue').value.trim();
 		console.log('正在查询验证号码：', verificationValue);
 
 		// 在数据中查找匹配的验证号码
+		const matchedItem = verificationData.find(item => 
+			item.verificationCode.toLowerCase() === verificationValue.toLowerCase()
+		);
 
-		if (verificationValue) {
+		if (matchedItem) {
 			// 验证号码存在，跳转到PDF预览页面
-			window.location.href = `viewPdf.html?pdf=${verificationValue}`;
+			const pdfPath = encodeURIComponent(matchedItem.pdfPath);
+			window.location.href = `viewPdf.html?pdf=${pdfPath}`;
 		} else {
 			// 验证号码不存在
 			alert('未找到匹配的验证号码，请检查输入是否正确');
